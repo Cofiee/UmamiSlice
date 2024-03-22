@@ -1,0 +1,7 @@
+# IntelliJ IDEA
+*.iws
+*.iml
+*.ipr
+.idea/
+
+/flaskApp/static/
