@@ -1,0 +1,51 @@
+version: "3.91"
+services:
+  flaskApp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: local_image/flask_rq
+    stop_signal: SIGINT
+    volumes:
+      - type: bind
+        source: ./flaskApp
+        target: /app
+      - type: bind
+        source: ./model
+        target: /app/model
+    ports:
+      - "5000:5000"
+    command: python app.py
+
+    depends_on:
+      - minio
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: local_image/flask_rq
+    volumes:
+      - type: bind
+        source: ./workers
+        target: /app
+      - type: bind
+        source: ./model
+        target: /app/model
+    command: python worker.py
+
+    depends_on:
+      - redis
+      - minio
+
+  redis:
+    hostname: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  minio:
+    image: docker.io/bitnami/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
