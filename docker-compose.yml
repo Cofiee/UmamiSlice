@@ -8,13 +8,16 @@ services:
     stop_signal: SIGINT
     volumes:
       - type: bind
-        source: ./flaskApp
+        source: ${flask_source_dir}
         target: /app
       - type: bind
-        source: ./model
+        source: ${model_lib_source_dir}
         target: /app/model
+      - type: bind
+        source: ${dal_lib_source_dir}
+        target: /app/DAL
     ports:
-      - "5000:5000"
+      - ${flask_app_ports}
     command: python app.py
 
     depends_on:
@@ -24,13 +27,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: local_image/flask_rq
+    image: local_image/ml_worker
     volumes:
       - type: bind
-        source: ./workers
+        source: ${worker_source_dir}
         target: /app
       - type: bind
-        source: ./model
+        source: ${model_lib_source_dir}
         target: /app/model
     command: python worker.py
 
@@ -42,10 +45,13 @@ services:
     hostname: redis
     image: redis:latest
     ports:
-      - "6379:6379"
+      - ${redis_port}
 
   minio:
     image: docker.io/bitnami/minio
+    environment:
+      MINIO_ROOT_USER: minio_access_key
+      MINIO_ROOT_PASSWORD: minio_secret_key
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - ${minio_port_1}
+      - ${minio_port_2}

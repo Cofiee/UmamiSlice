@@ -1,3 +1,4 @@
 redis~=5.0.3
 rq~=1.16.1
 rembg[gpu]~=2.0.56
+minio~=7.2.5
