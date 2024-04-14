@@ -35,6 +35,9 @@ services:
       - type: bind
         source: ${model_lib_source_dir}
         target: /app/model
+      - type: bind
+        source: ${dal_lib_source_dir}
+        target: /app/DAL
     command: python worker.py
 
     depends_on:
