@@ -1,0 +1,11 @@
+FROM python:3.10.14-bookworm
+
+# Copy the application code into the container
+COPY /flaskApp .
+# Copy the shared libraries into the container
+COPY /DAL /DAL
+# Install dependencies
+RUN pip install --no-cache-dir -r flask-requirements.txt
+
+# Command to run the application
+CMD ["python", "app.py"]

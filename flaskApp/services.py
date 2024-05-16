@@ -3,11 +3,9 @@ import io
 from flask_rq2 import RQ
 
 from DAL.filesRepository import IImagesRepository
-from forms import ImageForm
-from model.model_mock import process_image_model
 
 
-class ImageProcessingService:
+class BackgroundRemoverServiceProxy:
     def __init__(self, rq: RQ, images_repository: IImagesRepository):
         self.__rq: RQ = rq
         self.__images_repository: IImagesRepository = images_repository

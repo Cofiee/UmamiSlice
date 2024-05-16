@@ -1,0 +1,36 @@
+version: "3.91"
+services:
+  flaskApp:
+    image: umamislice-flask-app
+    stop_signal: SIGINT
+    ports:
+      - ${flask_app_ports}
+    command: python app.py
+
+    depends_on:
+      - minio
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: umamislice-worker
+
+    depends_on:
+      - redis
+      - minio
+
+  redis:
+    hostname: redis
+    image: redis:latest
+    ports:
+      - ${redis_port}
+
+  minio:
+    image: docker.io/bitnami/minio
+    environment:
+      MINIO_ROOT_USER: minio_access_key
+      MINIO_ROOT_PASSWORD: minio_secret_key
+    ports:
+      - ${minio_port_1}
+      - ${minio_port_2}

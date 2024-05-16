@@ -1,0 +1,12 @@
+FROM python:3.10.14-bookworm
+
+# Copy the application code into the container
+COPY /workers .
+# Copy the shared libraries into the container
+COPY /DAL /DAL
+COPY /model /model
+# Install dependencies
+RUN pip install --no-cache-dir -r workers-requirements.txt
+
+# Command to run the application
+CMD ["python", "worker.py"]

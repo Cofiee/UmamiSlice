@@ -1,12 +1,12 @@
 import io
 import uuid
 from DAL import filesRepository
-from flask import Flask, render_template, request, send_file
+from flask import Flask, flash, jsonify, redirect, render_template, request, send_file
 from flask_bootstrap import Bootstrap5
 from flask_wtf import CSRFProtect
 from flask_rq2 import RQ
 from forms import ImageForm
-from services import ImageProcessingService
+from services import BackgroundRemoverServiceProxy
 
 # APP #####################
 app = Flask(__name__)
@@ -21,28 +21,30 @@ default_queue = rq.get_queue()
 
 # SERVICES ################
 image_repository = filesRepository.ImagesMINIORepository()
-image_processing_service = ImageProcessingService(rq, image_repository)
+image_processing_service = BackgroundRemoverServiceProxy(rq, image_repository)
 
 
 # CONTROLLERS ##############
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = ImageForm()
-    if request.method == 'GET':
-        return render_template("index.html", form=form)
-    elif request.method == 'POST' and form.validate_on_submit():
+    return render_template("index.html", form=form)
+
+
+@app.route('/api/remove-background', methods=['POST'])
+def remove_background():
+    if request.method == 'POST':
+        form = ImageForm()
         new_file_name = uuid.uuid4().hex
         img_byte_array = request.files[form.image.name].read()
         image = io.BytesIO(img_byte_array)
         job_id = image_processing_service.schedule_remove_background(image, new_file_name)
-        return {
+        return jsonify({
             "imageSize": len(image.getvalue()),
-            "jobId": job_id,
+            "job_id": job_id,
             "image_guid": new_file_name,
             "image_name": form.image.name
-        }
-
-    return render_template("index.html", form=form)
+        })
 
 
 @app.route('/api/removed-background/<image_guid>', methods=['GET'])
@@ -51,7 +53,7 @@ def get_image_no_background(image_guid):
     return send_file(image, mimetype='image/jpg')
 
 
-@app.route('/status/<job_id>', methods=['GET'])
+@app.route('/api/status/<job_id>', methods=['GET'])
 def get_job_status(job_id):
     status = image_processing_service.get_job_status(job_id)
     return {"status": status}

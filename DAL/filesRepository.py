@@ -26,7 +26,7 @@ class IImagesRepository(metaclass=ABCMeta):
 class ImagesMINIORepository(IImagesRepository):
     def __init__(self):
         self.__bucket_name = 'mybucket'
-        self.__client = Minio('umamislice-minio-1:9000',
+        self.__client = Minio('localhost:9000', #Minio('umamislice-minio-1:9000',
                access_key='minio_access_key',
                secret_key='minio_secret_key',
                secure=False)
