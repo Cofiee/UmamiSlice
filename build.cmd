@@ -1,2 +1,2 @@
-docker build -t umamislice-flask-app -f Dockerfile-flask .
-docker build -t umamislice-worker -f Dockerfile-worker .
+docker build -t local_image/flask_rq -f Dockerfile-flask .
+docker build -t local_image/ml_worker -f Dockerfile-worker .

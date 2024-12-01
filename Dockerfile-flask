@@ -4,6 +4,8 @@ FROM python:3.10.14-bookworm
 COPY /flaskApp .
 # Copy the shared libraries into the container
 COPY /DAL /DAL
+# Copy configuration file into the container
+COPY flaskApp/config-docker.json .
 # Install dependencies
 RUN pip install --no-cache-dir -r flask-requirements.txt
 

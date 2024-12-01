@@ -1,11 +1,12 @@
 import io
 
+from dependency_injector.wiring import inject
 from flask_rq2 import RQ
 
 from DAL.filesRepository import IImagesRepository
 
 
-class BackgroundRemoverServiceProxy:
+class BackgroundRemoverService:
     def __init__(self, rq: RQ, images_repository: IImagesRepository):
         self.__rq: RQ = rq
         self.__images_repository: IImagesRepository = images_repository

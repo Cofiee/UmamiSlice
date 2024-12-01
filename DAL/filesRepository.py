@@ -24,12 +24,18 @@ class IImagesRepository(metaclass=ABCMeta):
 
 
 class ImagesMINIORepository(IImagesRepository):
-    def __init__(self):
-        self.__bucket_name = 'mybucket'
-        self.__client = Minio('localhost:9000', #Minio('umamislice-minio-1:9000',
-               access_key='minio_access_key',
-               secret_key='minio_secret_key',
-               secure=False)
+    def __init__(
+            self,
+            bucket_name: str,
+            url: str,
+            access_key: str,
+            secret_key: str
+    ):
+        self.__bucket_name = bucket_name
+        self.__client = Minio(url,
+            access_key=access_key,
+            secret_key=secret_key,
+            secure=False)
         # Make a bucket
         if not self.__client.bucket_exists(self.__bucket_name):
             self.__client.make_bucket(self.__bucket_name)

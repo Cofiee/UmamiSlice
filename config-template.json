@@ -1,0 +1,8 @@
+{
+  "SECRET_KEY": "",
+  "REDIS_URL": "",
+  "MINIO_URL": "",
+  "MINIO_ACCESS_KEY": "",
+  "MINIO_SECRET_KEY": "",
+  "MINIO_BUCKET": ""
+}
