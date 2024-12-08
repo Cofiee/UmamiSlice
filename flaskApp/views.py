@@ -6,7 +6,8 @@ from flask import request, render_template, jsonify, send_file
 
 from di_container import Container
 from forms import ImageForm
-from services import BackgroundRemoverService
+from services import BackgroundRemoverService, BackgroundRemoverServiceRabbitMq
+
 
 def index():
     form = ImageForm()
@@ -15,7 +16,7 @@ def index():
 
 @inject
 def remove_background(
-        image_processing_service: BackgroundRemoverService = Provide[Container.background_remover_service]
+        image_processing_service: BackgroundRemoverServiceRabbitMq = Provide[Container.background_remover_service]
 ):
     if request.method == 'POST':
         form = ImageForm()
@@ -34,7 +35,7 @@ def remove_background(
 @inject
 def get_image_no_background(
     image_guid,
-    image_processing_service: BackgroundRemoverService = Provide[Container.background_remover_service]
+    image_processing_service: BackgroundRemoverServiceRabbitMq = Provide[Container.background_remover_service]
 ):
     image = image_processing_service.fetch_image(image_guid)
     return send_file(image, mimetype='image/jpg')
@@ -43,7 +44,7 @@ def get_image_no_background(
 @inject
 def get_job_status(
     job_id,
-    image_processing_service: BackgroundRemoverService = Provide[Container.background_remover_service]
+    image_processing_service: BackgroundRemoverServiceRabbitMq = Provide[Container.background_remover_service]
 ):
     status = image_processing_service.get_job_status(job_id)
     return {"status": status}

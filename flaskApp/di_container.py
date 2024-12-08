@@ -3,7 +3,7 @@ from dependency_injector import containers, providers
 from flask_rq2 import RQ
 
 from DAL.filesRepository import IImagesRepository, ImagesMINIORepository
-from services import BackgroundRemoverService
+from services import BackgroundRemoverService, BackgroundRemoverServiceRabbitMq
 
 
 class Container(containers.DeclarativeContainer):
@@ -21,10 +21,17 @@ class Container(containers.DeclarativeContainer):
 
     redis_queue = providers.Singleton(RQ)
 
+    """
     background_remover_service = providers.Dependency(
         instance_of=BackgroundRemoverService, default=providers.Factory(
             BackgroundRemoverService,
             rq=redis_queue,
             images_repository=images_repository,
         ))
+    """
 
+    background_remover_service = providers.Dependency(
+        instance_of=BackgroundRemoverServiceRabbitMq, default=providers.Factory(
+            BackgroundRemoverServiceRabbitMq,
+            images_repository=images_repository,
+        ))

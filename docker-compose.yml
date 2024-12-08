@@ -38,7 +38,7 @@ services:
       - type: bind
         source: ${dal_lib_source_dir}
         target: /app/DAL
-    command: python worker.py
+    command: python rq_worker.py
 
     depends_on:
       - redis
